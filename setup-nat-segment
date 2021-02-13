@@ -18,6 +18,7 @@ firewall-cmd --get-default-zone
 firewall-cmd --get-services
 firewall-cmd --permanent --zone=public --add-service=ssh
 firewall-cmd --permanent --zone=public --add-service=dhcpv6-client
+firewall-cmd --zone=public --add-masquerade --permanent
 
 firewall-cmd --permanent --zone=internal --add-source=192.168.255.0/24
 firewall-cmd --permanent --zone=internal --add-port=0-65535/tcp
