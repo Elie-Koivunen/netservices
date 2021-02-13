@@ -95,30 +95,6 @@
     ip a s
     ip r
     cat /etc/resolv.conf    
-  - configure dhcpd for pxe
-    mv /etc/dhcp/dhcpd.conf /etc/dhcp/bak-dhcpd.conf-bak
-    echo "# DHCP Server Configuration file." >> /etc/dhcp/dhcpd.conf
-    echo "ddns-update-style interim;" >> /etc/dhcp/dhcpd.conf
-    echo "ignore client-updates;" >> /etc/dhcp/dhcpd.conf
-    echo "authoritative;" >> /etc/dhcp/dhcpd.conf
-    echo "allow booting;" >> /etc/dhcp/dhcpd.conf
-    echo "allow bootp;" >> /etc/dhcp/dhcpd.conf
-    echo "allow unknown-clients;" >> /etc/dhcp/dhcpd.conf
-    echo "" >> /etc/dhcp/dhcpd.conf
-    echo "# internal subnet for my DHCP Server" >> /etc/dhcp/dhcpd.conf
-    echo "subnet 192.168.255.0 netmask 255.255.255.0 {" >> /etc/dhcp/dhcpd.conf
-    echo "range 192.168.255.101 192.168.255.130;" >> /etc/dhcp/dhcpd.conf
-    echo "option domain-name-servers 192.168.255.5;" >> /etc/dhcp/dhcpd.conf
-    echo "option domain-name \"pxe.q8s.vlab\";" >> /etc/dhcp/dhcpd.conf
-    echo "option routers 192.168.255.5;" >> /etc/dhcp/dhcpd.conf
-    echo "option broadcast-address 192.168.255.255;" >> /etc/dhcp/dhcpd.conf
-    echo "default-lease-time 600;" >> /etc/dhcp/dhcpd.conf
-    echo "max-lease-time 7200;" >> /etc/dhcp/dhcpd.conf
-    echo "" >> /etc/dhcp/dhcpd.conf
-    echo "# IP of PXE Server" >> /etc/dhcp/dhcpd.conf
-    echo "next-server 192.168.255.5;" >> /etc/dhcp/dhcpd.conf
-    echo "filename \"pxelinux.0\";" >> /etc/dhcp/dhcpd.conf
-    echo "}" >> /etc/dhcp/dhcpd.conf
   
   - configure tftp
     mv /etc/xinetd.d/tftp /root/bak-tftp-bak
@@ -159,62 +135,8 @@
     - hash the root password so it can be used in the kickstart file
       openssl passwd -1 a
           $1$PlIWL.7S$QXthlBMuPyN7jj3RF2BLp.
-    - create kickstart file
-      echo "#platform=x86, AMD64, or Intel EM64T" >> /var/ftp/pub/centos7.cfg
-      echo "#version=DEVEL" >> /var/ftp/pub/centos7.cfg
-      echo "# Firewall configuration" >> /var/ftp/pub/centos7.cfg
-      echo "firewall --disabled" >> /var/ftp/pub/centos7.cfg
-      echo "# Install OS instead of upgrade" >> /var/ftp/pub/centos7.cfg
-      echo "install" >> /var/ftp/pub/centos7.cfg
-      echo "# Use FTP installation media" >> /var/ftp/pub/centos7.cfg
-      echo "url --url='ftp://192.168.255.5/pub/'" >> /var/ftp/pub/centos7.cfg
-      echo "# Root password" >> /var/ftp/pub/centos7.cfg
-      echo "rootpw --iscrypted $6$SEIDDz9bkRRLBnzs$PcFSSReM/9fkNcASnNHtsv5b7PpYKMv1vtxf0maKZDkkMc..6sqFPMula1y.FHcVSvZGBQ1hlGQmX./i.1ziN/" >> /var/ftp/pub/centos7.cfg
-      echo "# System authorization information" >> /var/ftp/pub/centos7.cfg
-      echo "auth useshadow passalgo=sha512" >> /var/ftp/pub/centos7.cfg
-      echo "# Use graphical install" >> /var/ftp/pub/centos7.cfg
-      echo "graphical" >> /var/ftp/pub/centos7.cfg
-      echo "firstboot disable" >> /var/ftp/pub/centos7.cfg
-      echo "# Keyboard layouts" >> /var/ftp/pub/centos7.cfg
-      echo "keyboard --vckeymap=fi --xlayouts='fi'" >> /var/ftp/pub/centos7.cfg
-      echo "# System language" >> /var/ftp/pub/centos7.cfg
-      echo "lang en_US.UTF-8" >> /var/ftp/pub/centos7.cfg
-      echo "# SELinux configuration" >> /var/ftp/pub/centos7.cfg
-      echo "selinux disabled" >> /var/ftp/pub/centos7.cfg
-      echo "# Installation logging level" >> /var/ftp/pub/centos7.cfg
-      echo "logging level=info" >> /var/ftp/pub/centos7.cfg
-      echo "# System timezone" >> /var/ftp/pub/centos7.cfg
-      echo "timezone Europe/Helsinki --isUtc --nontp" >> /var/ftp/pub/centos7.cfg
-      echo "# System services" >> /var/ftp/pub/centos7.cfg
-      echo "services --disabled='chronyd'" >> /var/ftp/pub/centos7.cfg
-      echo "user --name=mandalorian --password=$6$D68F/H2YKyg2Dial$od51RxMxdBlcNDfOPe6.vlAJOWX4E7nG1mXHzKCCpoLgC/JuGv6ROvB6YeUNnxiDfFBiiGL6fypZOqoCss1vb0 --iscrypted --gecos='mandalorian'" >> /var/ftp/pub/centos7.cfg
-      echo "user --name=q8s --password=$6$D68F/H2YKyg2Dial$od51RxMxdBlcNDfOPe6.vlAJOWX4E7nG1mXHzKCCpoLgC/JuGv6ROvB6YeUNnxiDfFBiiGL6fypZOqoCss1vb0 --iscrypted --gecos='q8s'" >> /var/ftp/pub/centos7.cfg
-      echo "# System bootloader configuration" >> /var/ftp/pub/centos7.cfg
-      echo "bootloader location=mbr" >> /var/ftp/pub/centos7.cfg
-      echo "clearpart --all --initlabel" >> /var/ftp/pub/centos7.cfg
-      echo "part swap --asprimary --fstype='swap' --size=1024" >> /var/ftp/pub/centos7.cfg
-      echo "part /boot --fstype xfs --size=300" >> /var/ftp/pub/centos7.cfg
-      echo "part pv.01 --size=1 --grow" >> /var/ftp/pub/centos7.cfg
-      echo "volgroup root_vg01 pv.01" >> /var/ftp/pub/centos7.cfg
-      echo "logvol / --fstype xfs --name=lv_01 --vgname=root_vg01 --size=1 --grow" >> /var/ftp/pub/centos7.cfg
-      echo "%packages" >> /var/ftp/pub/centos7.cfg
-      echo "@^minimal" >> /var/ftp/pub/centos7.cfg
-      echo "@core" >> /var/ftp/pub/centos7.cfg
-      echo "%end" >> /var/ftp/pub/centos7.cfg
-      echo "%addon com_redhat_kdump --disable --reserve-mb='auto'" >> /var/ftp/pub/centos7.cfg
-      echo "%end" >> /var/ftp/pub/centos7.cfg
-
-    - create PXE menu
-      echo "default menu.c32" >> /var/lib/tftpboot/pxelinux.cfg/default
-      echo "prompt 0" >> /var/lib/tftpboot/pxelinux.cfg/default
-      echo "timeout 30" >> /var/lib/tftpboot/pxelinux.cfg/default
-      echo "MENU TITLE PXE installation Menu" >> /var/lib/tftpboot/pxelinux.cfg/default
-      echo "LABEL centos7_x64" >> /var/lib/tftpboot/pxelinux.cfg/default
-      echo "MENU LABEL CentOS 7_X64" >> /var/lib/tftpboot/pxelinux.cfg/default
-      echo "KERNEL /networkboot/vmlinuz" >> /var/lib/tftpboot/pxelinux.cfg/default
-      echo "APPEND initrd=/networkboot/initrd.img inst.repo=ftp://192.168.255.5/pub ks=ftp://192.168.255.5/pub/centos7.cfg" >> /var/lib/tftpboot/pxelinux.cfg/default
   
-     - start and enable service to launch the PXE boot environment
+  - start and enable service to launch the PXE boot environment
       systemctl start xinetd
       systemctl enable xinetd
       systemctl start dhcpd.service
