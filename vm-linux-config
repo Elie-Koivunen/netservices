@@ -97,6 +97,17 @@
     ip r
     cat /etc/resolv.conf    
   
+  echo "NETWORKING_IPV6=no" >> /etc/sysconfig/network
+echo "IPV6INIT=no" >> /etc/sysconfig/network
+echo "net.ipv6.conf.default.disable_ipv6=1" >> /etc/sysctl.conf
+echo "net.ipv6.conf.all.disable_ipv6=1" >> /etc/sysctl.conf
+sed -i 's/IPV6INIT=yes/IPV6INIT=no/g' /etc/sysconfig/network-scripts/ifcfg-ens33
+echo "NOZEROCONF=yes" >> /etc/sysconfig/network
+sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=1/g' /etc/default/grub
+grub2-mkconfig -o /boot/grub2/grub.cfg
+sed -i 's/^#\(ClientAliveInterval\).*$/\1 180/g' /etc/ssh/sshd_config
+  
+  
   - configure tftp
     mv /etc/xinetd.d/tftp /root/bak-tftp-bak
     echo "service tftp" >> /etc/xinetd.d/tftp
