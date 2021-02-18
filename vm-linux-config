@@ -196,3 +196,7 @@ driftfile /var/lib/ntp/drift
 
 restrict 127.0.0.1
 restrict 192.168.255.0 mask 255.255.255.0 nomodify notrap
+
+# start ntp service
+systemctl enable ntpd
+systemctl start ntpd
