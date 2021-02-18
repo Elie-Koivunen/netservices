@@ -181,3 +181,6 @@ sed -i 's/^#\(ClientAliveInterval\).*$/\1 180/g' /etc/ssh/sshd_config
   - install some basic packages#                yum install wget curl net-tools screen iftop iostat iozone iperf expect iptraf -y
   - install some clustering related packages#   yum install ansible -y
   
+# install ntp
+ yum install -y ntp
+  
