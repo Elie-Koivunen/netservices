@@ -184,3 +184,15 @@ sed -i 's/^#\(ClientAliveInterval\).*$/\1 180/g' /etc/ssh/sshd_config
 # install ntp
  yum install -y ntp
   
+# edit /etc/ntp.conf
+restrict default kod nomodify notrap nopeer noquery
+restrict -6 default kod nomodify notrap nopeer noquery
+logfile /var/log/ntp.log
+
+server 127.127.1.0 #local clock
+fudge  127.127.1.0 stratum 10
+
+driftfile /var/lib/ntp/drift
+
+restrict 127.0.0.1
+restrict 192.168.255.0 mask 255.255.255.0 nomodify notrap
