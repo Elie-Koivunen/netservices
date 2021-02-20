@@ -200,3 +200,16 @@ restrict 192.168.255.0 mask 255.255.255.0 nomodify notrap
 # start ntp service
 systemctl enable ntpd
 systemctl start ntpd
+
+# setup nfs
+yum install nfs-utils rpcbind portmap
+systemctl enable nfs-server
+systemctl enable rpcbind
+systemctl enable nfs-lock
+systemctl enable nfs-idmap
+systemctl start rpcbind
+systemctl start nfs-server
+systemctl start nfs-lock
+systemctl start nfs-idmap
+systemctl status nfs
+
